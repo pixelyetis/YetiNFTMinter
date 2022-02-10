@@ -1,5 +1,7 @@
-const SimpleStorage = artifacts.require('SimpleStorage.sol');
+const CatLoot = artifacts.require('CatLoot.sol');
+const YetiMinter = artifacts.require('YetiMinter.sol');
 
 module.exports = function(deployer) {
-	deployer.deploy(SimpleStorage);
+	deployer.deploy(YetiMinter);
+	// deployer.deploy(CatLoot);
 }
