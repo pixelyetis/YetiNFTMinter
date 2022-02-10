@@ -9,6 +9,8 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 contract YetiMinter is ERC721Enumerable{
 	using SafeMath for uint256;
 
+	uint256 MAX_SUPPLY = 420;
+
 	
 	struct Yeti {
 		string accessory;
@@ -30,12 +32,12 @@ contract YetiMinter is ERC721Enumerable{
 
 
 	constructor() ERC721('TestNFT', 'TN') {
-
 	}
 
 
 	// Function to mint A new Yeti NFT.
 	function mintYeti() public{
+		require(totalSupply() < MAX_SUPPLY, "Max supply reached");
 
 		uint256 mintIndex = totalSupply();
 
