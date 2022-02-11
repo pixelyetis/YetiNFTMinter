@@ -84,6 +84,14 @@ contract YetiMinter is ERC721Enumerable, Ownable{
 		mintPrice = _price;
 	}
 
+	function getMintTokenAddress() external view returns(address){
+		return mintToken;
+	}
+
+	function setMintTokenAddress(address _newMintToken) external onlyOwner{
+		mintToken = _newMintToken;
+	}
+
 	function withdraw() external onlyOwner{
         payable(msg.sender).transfer(address(this).balance);
 	}
@@ -97,7 +105,7 @@ contract YetiMinter is ERC721Enumerable, Ownable{
 		return rand % _attributeList.length;
 	}
 
-	// Implement tokenURI.
+	// Implement tokenURI
 
 	function getAccessory(uint256 _tokenId) public view returns(string memory){
 		return(yetis[_tokenId].accessory);
@@ -122,6 +130,8 @@ contract YetiMinter is ERC721Enumerable, Ownable{
 	function getSkin(uint256 _tokenId) public view returns(string memory){
 		return(yetis[_tokenId].skin);
 	}
+
+
 
 	// Function for converting uint256 to string
 	function toString(uint256 value) internal pure returns (string memory) {
