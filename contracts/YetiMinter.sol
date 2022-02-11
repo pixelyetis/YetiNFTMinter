@@ -6,11 +6,28 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
+
+interface ERC20Interface {
+    function totalSupply() external view returns (uint256);
+    function balanceOf(address account) external view returns (uint256);
+    function allowance(address owner, address spender) external view returns (uint256);
+    function transfer(address to, uint256 amount) external returns (bool) ;
+    function approve(address spender, uint256 amount) external returns (bool) ;
+    function transferFrom(address from, address to, uint256 amount) external returns (bool);
+    event Transfer(address indexed from, address indexed to, uint256 value);
+    event Approval(address indexed owner, address indexed spender, uint256 value);
+}
+
+
 contract YetiMinter is ERC721Enumerable, Ownable{
 	using SafeMath for uint256;
 
-	uint256 MAX_SUPPLY = 420;
-	uint256 mintPrice = 0.05 ether;
+	uint256 public MAX_SUPPLY = 420;
+	uint256 public mintPrice = 50 ether;
+
+	address mintToken = 0x9a946c3Cb16c08334b69aE249690C236Ebd5583E;
+	ERC20Interface tokenInterface = ERC20Interface(mintToken);
+
 
 
 	
@@ -38,9 +55,13 @@ contract YetiMinter is ERC721Enumerable, Ownable{
 
 
 	// Function to mint A new Yeti NFT.
-	function mintYeti() public payable{
+	function mintYeti(uint256 _amount) public payable{
 		require(totalSupply() < MAX_SUPPLY, "Max supply reached.");
-		require(msg.value == mintPrice, "Incorrect minting price.");
+		// require(msg.value == mintPrice, "Incorrect minting price.");
+		require(_amount == mintPrice, "Incorrect minting price given.");
+
+		// Transfer token from wallet to contract
+		tokenInterface.transferFrom(address(msg.sender), address(this), _amount);
 
 		uint256 mintIndex = totalSupply();
 
