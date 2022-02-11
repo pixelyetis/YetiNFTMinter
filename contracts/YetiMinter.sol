@@ -42,6 +42,7 @@ contract YetiMinter is ERC721Enumerable, Ownable{
 
 	Yeti[] private yetis;
 
+	// String array of all available traits.
 	string[] private accessories = ["Beanie", "Bowtie", "Cigarette", "Fast Food","Headphones", "None", "Nose Piercing"];
 	string[] private eyes = ["Angry Eyes","Bored Eyes", "Eye Patch", "Glasses", "Happy Eyes", "Normal Eyes", "Pissed Eyes", "Shades", "Sleeping Eyes"];
 	string[] private fur = ["Beige Fur", "Blue Fur", "Blue Fur Striped", "Gray Fur", "Gray Fur Checkered", "Gray Fur", "Pixelated Fur", "Rainbow Fur", "White Fur", "White Fur Striped"];
@@ -94,6 +95,32 @@ contract YetiMinter is ERC721Enumerable, Ownable{
 		string memory str = string(abi.encodePacked(toString(_yetiId), _attribute));
 		uint256 rand = uint256(keccak256(abi.encodePacked(str)));
 		return rand % _attributeList.length;
+	}
+
+	// Implement tokenURI.
+
+	function getAccessory(uint256 _tokenId) public view returns(string memory){
+		return(yetis[_tokenId].accessory);
+	}
+
+	function getEyes(uint256 _tokenId) public view returns(string memory){
+		return(yetis[_tokenId].eyes);
+	}
+
+	function getFur(uint256 _tokenId) public view returns(string memory){
+		return(yetis[_tokenId].fur);
+	}
+
+	function getHorns(uint256 _tokenId) public view returns(string memory){
+		return(yetis[_tokenId].horns);
+	}
+
+	function getMouth(uint256 _tokenId) public view returns(string memory){
+		return(yetis[_tokenId].mouth);
+	}
+
+	function getSkin(uint256 _tokenId) public view returns(string memory){
+		return(yetis[_tokenId].skin);
 	}
 
 	// Function for converting uint256 to string
