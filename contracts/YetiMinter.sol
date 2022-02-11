@@ -57,6 +57,10 @@ contract YetiMinter is ERC721Enumerable{
 
 
 	}
+	
+	function setMintingPrice(uint _price) external onlyOwner{
+		mintPrice = _price;
+	}
 
 	function _generateRandomAttribute(uint256 _yetiId, string memory _attribute, string[] memory _attributeList) private pure returns(uint256) {
 		// Use attribute name and NFT number to generate randomness.
