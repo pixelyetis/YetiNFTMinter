@@ -10,6 +10,8 @@ contract YetiMinter is ERC721Enumerable{
 	using SafeMath for uint256;
 
 	uint256 MAX_SUPPLY = 420;
+	uint256 mintPrice = 0.05;
+
 
 	
 	struct Yeti {
@@ -36,8 +38,9 @@ contract YetiMinter is ERC721Enumerable{
 
 
 	// Function to mint A new Yeti NFT.
-	function mintYeti() public{
-		require(totalSupply() < MAX_SUPPLY, "Max supply reached");
+	function mintYeti() public payable{
+		require(totalSupply() < MAX_SUPPLY, "Max supply reached.");
+		require(msg.value == mintPrice, "Incorrect minting price.");
 
 		uint256 mintIndex = totalSupply();
 
