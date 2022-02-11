@@ -10,7 +10,7 @@ contract YetiMinter is ERC721Enumerable{
 	using SafeMath for uint256;
 
 	uint256 MAX_SUPPLY = 420;
-	uint256 mintPrice = 0.05;
+	uint256 mintPrice = 0.05 ether;
 
 
 	
@@ -58,7 +58,7 @@ contract YetiMinter is ERC721Enumerable{
 
 	}
 
-	function _generateRandomAttribute(uint256 _yetiId, string memory _attribute, string[] memory _attributeList) private view returns(uint256) {
+	function _generateRandomAttribute(uint256 _yetiId, string memory _attribute, string[] memory _attributeList) private pure returns(uint256) {
 		// Use attribute name and NFT number to generate randomness.
 		// string yetiId = toString(_yetiId);
 		// string str = string( abi.encodePacked(_attribute, yetiId) );
