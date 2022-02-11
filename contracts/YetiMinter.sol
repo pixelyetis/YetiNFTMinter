@@ -4,9 +4,9 @@ pragma solidity >= 0.5.0;
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
-// import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
-contract YetiMinter is ERC721Enumerable{
+contract YetiMinter is ERC721Enumerable, Ownable{
 	using SafeMath for uint256;
 
 	uint256 MAX_SUPPLY = 420;
@@ -57,9 +57,13 @@ contract YetiMinter is ERC721Enumerable{
 
 
 	}
-	
-	function setMintingPrice(uint _price) external onlyOwner{
+
+	function setMintingPrice(uint256 _price) external onlyOwner{
 		mintPrice = _price;
+	}
+
+	function withdraw() external onlyOwner{
+        payable(msg.sender).transfer(address(this).balance);
 	}
 
 	function _generateRandomAttribute(uint256 _yetiId, string memory _attribute, string[] memory _attributeList) private pure returns(uint256) {
