@@ -58,7 +58,6 @@ contract YetiMinter is ERC721Enumerable, Ownable{
 	// Function to mint A new Yeti NFT.
 	function mintYeti(uint256 _amount) public payable{
 		require(totalSupply() < MAX_SUPPLY, "Max supply reached.");
-		// require(msg.value == mintPrice, "Incorrect minting price.");
 		require(_amount == mintPrice, "Incorrect minting price given.");
 
 		// Transfer token from wallet to contract
@@ -78,6 +77,12 @@ contract YetiMinter is ERC721Enumerable, Ownable{
 		_safeMint(msg.sender, mintIndex);
 
 
+	}
+
+
+
+	function getMintingPrice() external view returns(uint256){
+		return mintPrice;
 	}
 
 	function setMintingPrice(uint256 _price) external onlyOwner{
