@@ -52,11 +52,18 @@ contract YetiMinter is ERC721Enumerable, Ownable{
 	constructor() ERC721('TestNFT', 'TN') {
 	}
 
-
+	/*-------------------------------------------------*/
 	// Use for testing purposes. Not needed for deployment.
 	function getAddr() external view returns(address){
 		return address(this);
 	}
+	uint256 public MAX_TEST_SUPPLY = 4;
+	function getMaxSupply() external view returns(uint256){
+		return MAX_TEST_SUPPLY;
+	}
+
+	/*-------------------------------------------------*/
+
 
 	// Function to mint A new Yeti NFT.
 	function mintYeti(uint256 _amount) public payable{
