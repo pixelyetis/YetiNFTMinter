@@ -28,8 +28,6 @@ contract YetiMinter is ERC721Enumerable, Ownable{
 	address mintToken = 0x9a946c3Cb16c08334b69aE249690C236Ebd5583E;
 	ERC20Interface tokenInterface = ERC20Interface(mintToken);
 
-
-
 	
 	struct Yeti {
 		string accessory;
@@ -53,7 +51,6 @@ contract YetiMinter is ERC721Enumerable, Ownable{
 
 	constructor() ERC721('TestNFT', 'TN') {
 	}
-
 
 	// Function to mint A new Yeti NFT.
 	function mintYeti(uint256 _amount) public payable{
@@ -95,6 +92,7 @@ contract YetiMinter is ERC721Enumerable, Ownable{
 
 	function setMintTokenAddress(address _newMintToken) external onlyOwner{
 		mintToken = _newMintToken;
+		tokenInterface = ERC20Interface(mintToken);
 	}
 
 	function withdraw() external onlyOwner{
