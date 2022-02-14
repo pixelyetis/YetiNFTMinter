@@ -38,7 +38,7 @@ contract YetiMinter is ERC721Enumerable, Ownable{
 		string skin;
 	}
 
-	Yeti[] private yetis;
+	Yeti[] public yetis;
 
 	// String array of all available traits.
 	string[] private accessories = ["Beanie", "Bowtie", "Cigarette", "Fast Food","Headphones", "None", "Nose Piercing"];
@@ -49,8 +49,8 @@ contract YetiMinter is ERC721Enumerable, Ownable{
 	string[] private skin = ["Blue Skin", "Dark Blue Skin", "Green Skin",  "Orange Skin", "Pink Skin", "Purple Skin"];
 
 
-	constructor() ERC721('TestNFT', 'TN') {
-	}
+	// constructor() ERC721('TestNFT', 'TN') {
+	// }
 
 	/*-------------------------------------------------*/
 	// Use for testing purposes. Not needed for deployment.
@@ -58,8 +58,23 @@ contract YetiMinter is ERC721Enumerable, Ownable{
 		return address(this);
 	}
 	uint256 public MAX_TEST_SUPPLY = 4;
+	constructor() ERC721('TestNFT', 'TN') {
+		MAX_SUPPLY = MAX_TEST_SUPPLY;
+	}
+
 	function getMaxSupply() external view returns(uint256){
-		return MAX_TEST_SUPPLY;
+		return MAX_SUPPLY;
+	}
+
+	function getYetiTraits(uint _tokenId) external view returns(string memory){
+		return string(abi.encodePacked(yetis[_tokenId].accessory, '\n', 
+											yetis[_tokenId].eyes,  '\n', 
+											yetis[_tokenId].fur, '\n', 
+											yetis[_tokenId].horns, '\n', 
+											yetis[_tokenId].mouth, '\n', 
+											yetis[_tokenId].skin));
+		// return accessories[_generateRandomAttribute(_tokenId, "ACCESSORIES", accessories)];
+		// return 'test';
 	}
 
 	/*-------------------------------------------------*/
@@ -118,6 +133,9 @@ contract YetiMinter is ERC721Enumerable, Ownable{
 		// string str = string( abi.encodePacked(_attribute, yetiId) );
 		string memory str = string(abi.encodePacked(toString(_yetiId), _attribute));
 		uint256 rand = uint256(keccak256(abi.encodePacked(str)));
+
+		// if(abi.encodePacked(skin[rand]) == )
+
 		return rand % _attributeList.length;
 	}
 
