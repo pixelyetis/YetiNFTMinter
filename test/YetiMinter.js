@@ -3,8 +3,7 @@ const Blizz = artifacts.require('Blizz.sol')
 var assert = require('assert');
 
 
-
-contract('YetiMinter', () =>{
+contract('YetiMinter', (accounts) =>{
 	// it('Should mint new NFT', async() =>{
 	// 	const yeti = await YetiMinter.new();
 	// 	console.log('Before mint: ' + await yeti.totalSupply());
@@ -18,7 +17,7 @@ contract('YetiMinter', () =>{
 	let blzAddr = '0x8c7a60ac2B87CDFfD7b3d9d5e3F8f814d4D596a2';
 	const sender = '0x54f48e7daafAdA259033a05fa0AaEd3b99ae72f3';
 
-	it('Should deploy ERC20 token and mint 1k to deployer', async() =>{
+	it('Should deploy ERC20 token and mint 100k to deployer', async() =>{
 		blizz = await Blizz.new('Blizz', 'blz');
 		blzAddr = await blizz.getAddr();
 	})
@@ -58,19 +57,22 @@ contract('YetiMinter', () =>{
 		}catch(err){
 			assert(err.message.search('Max supply reached.') > 0)
 		}
+		console.log('Current supply: ' + await yeti.totalSupply())
 	})
 
-	// it('Should deploy ERC20 token and mint 1k to deployer', async() =>{
-	// 	const blizz = await Blizz.new('Blizz', 'blz')
-	// 	console.log(await blizz.balanceof(msg.sender))
-	// })
+	// Test only owner can make crucial changes.
+	it('Should ensure only owner can make changes to contract', async()=>{
+		console.log(accounts[1])
 
-	// it('Temp', async() =>{
-	// 	const yeti = await YetiMinter.new();
-	// 	const price = await yeti.getMintingPrice();
-	// 	console.log(BigInt(await yeti.getMintingPrice()));
-	// })
+		// From deployer
+		await yeti.setMintTokenAddress(blzAddr, {from: accounts[0]})
 
-
-	// Create ERC20 token to test contract with.
+		try{
+			await yeti.setMintingPrice(1, {from: accounts[1]})
+			await yeti.setMintTokenAddress(blzAddr, {from: accounts[1]})
+			await yeti.withdraw({from: accounts[1]})
+		}catch(err){
+			assert(err.message.search('Ownable: caller is not the owner') > 0)
+		}
+	})
 })
