@@ -47,7 +47,7 @@ contract YetiMinter is ERC721Enumerable, Ownable{
 	string[] private _eyes = ["Angry Eyes","Bored Eyes", "Eye Patch", "Glasses", "Happy Eyes", "Normal Eyes", "Pissed Eyes", "Shades", "Sleeping Eyes"];
 	string[] private _fur = ["Beige Fur", "Blue Fur", "Blue Fur Striped", "Gray Fur", "Gray Fur Checkered", "Gray Fur", "Pixelated Fur", "Rainbow Fur", "White Fur", "White Fur Striped"];
 	string[] private _horns = ["Black Horns", "Blue Horns", "Orange Horns", "Red Horns", "Yellow Horns"];
-	string[] private _mouth = ["Happy Mouth", "Normal Mouth", "Rainbow Mouth", "Rainbow Mouth Wave 1", "Rainbow Mouth Wave 2", "Sad Mouth", "Teeth"];
+	string[] private _mouth = ["Happy Mouth", "Normal Mouth", "Rainbow Mouth", "Rainbow Mouth Wave", "Sad Mouth", "Teeth"];
 	string[] private _skin = ["Blue Skin", "Dark Blue Skin", "Green Skin",  "Orange Skin", "Pink Skin", "Purple Skin"];
 
 
@@ -79,8 +79,6 @@ contract YetiMinter is ERC721Enumerable, Ownable{
 											yetis[_tokenId].horns, '\n', 
 											yetis[_tokenId].mouth, '\n', 
 											yetis[_tokenId].skin));
-		// return accessories[_generateRandomAttribute(_tokenId, "ACCESSORIES", accessories)];
-		// return 'test';
 	}
 
 	/*-------------------------------------------------*/
@@ -129,7 +127,7 @@ contract YetiMinter is ERC721Enumerable, Ownable{
 	}
 
 	function withdraw() external onlyOwner{
-        payable(msg.sender).transfer(address(this).balance);
+        tokenInterface.transfer(address(msg.sender),tokenInterface.balanceOf(address(this)));
 	}
 
 	function _generateRandomAttribute(uint256 _yetiId, string memory _attribute, string[] memory _attributeList) private pure returns(uint256) {
