@@ -30,6 +30,7 @@ contract YetiMinter is ERC721Enumerable, Ownable{
 
 	
 	struct Yeti {
+		string background;
 		string accessory;
 		string eyes;
 		string fur;
@@ -41,12 +42,13 @@ contract YetiMinter is ERC721Enumerable, Ownable{
 	Yeti[] public yetis;
 
 	// String array of all available traits.
-	string[] private accessories = ["Beanie", "Bowtie", "Cigarette", "Fast Food","Headphones", "None", "Nose Piercing"];
-	string[] private eyes = ["Angry Eyes","Bored Eyes", "Eye Patch", "Glasses", "Happy Eyes", "Normal Eyes", "Pissed Eyes", "Shades", "Sleeping Eyes"];
-	string[] private fur = ["Beige Fur", "Blue Fur", "Blue Fur Striped", "Gray Fur", "Gray Fur Checkered", "Gray Fur", "Pixelated Fur", "Rainbow Fur", "White Fur", "White Fur Striped"];
-	string[] private horns = ["Black Horns", "Blue Horns", "Orange Horns", "Red Horns", "Yellow Horns"];
-	string[] private mouth = ["Happy Mouth", "Normal Mouth", "Rainbow Mouth", "Rainbow Mouth Wave 1", "Rainbow Mouth Wave 2", "Sad Mouth", "Teeth"];
-	string[] private skin = ["Blue Skin", "Dark Blue Skin", "Green Skin",  "Orange Skin", "Pink Skin", "Purple Skin"];
+	string[] private _background = ["Dark Green and Dark Blue", "Green and Purple", "Purple and Brown", "Purple and Dark Red", "Teal and Red"];
+	string[] private _accessories = ["Beanie", "Bowtie", "Cigarette", "Fast Food","Headphones", "None", "Nose Piercing"];
+	string[] private _eyes = ["Angry Eyes","Bored Eyes", "Eye Patch", "Glasses", "Happy Eyes", "Normal Eyes", "Pissed Eyes", "Shades", "Sleeping Eyes"];
+	string[] private _fur = ["Beige Fur", "Blue Fur", "Blue Fur Striped", "Gray Fur", "Gray Fur Checkered", "Gray Fur", "Pixelated Fur", "Rainbow Fur", "White Fur", "White Fur Striped"];
+	string[] private _horns = ["Black Horns", "Blue Horns", "Orange Horns", "Red Horns", "Yellow Horns"];
+	string[] private _mouth = ["Happy Mouth", "Normal Mouth", "Rainbow Mouth", "Rainbow Mouth Wave 1", "Rainbow Mouth Wave 2", "Sad Mouth", "Teeth"];
+	string[] private _skin = ["Blue Skin", "Dark Blue Skin", "Green Skin",  "Orange Skin", "Pink Skin", "Purple Skin"];
 
 
 	// constructor() ERC721('TestNFT', 'TN') {
@@ -57,13 +59,17 @@ contract YetiMinter is ERC721Enumerable, Ownable{
 	function getAddr() external view returns(address){
 		return address(this);
 	}
-	uint256 public MAX_TEST_SUPPLY = 4;
+	uint256 public MAX_TEST_SUPPLY = MAX_SUPPLY;
 	constructor() ERC721('TestNFT', 'TN') {
 		MAX_SUPPLY = MAX_TEST_SUPPLY;
 	}
 
 	function getMaxSupply() external view returns(uint256){
 		return MAX_SUPPLY;
+	}
+
+	function setMaxSuply(uint256 _newSupply) external onlyOwner{
+		MAX_SUPPLY = _newSupply;
 	}
 
 	function getYetiTraits(uint _tokenId) external view returns(string memory){
@@ -91,17 +97,16 @@ contract YetiMinter is ERC721Enumerable, Ownable{
 		uint256 mintIndex = totalSupply();
 
 		yetis.push(Yeti(
-			accessories[_generateRandomAttribute(mintIndex, "ACCESSORIES", accessories)],
-			eyes[_generateRandomAttribute(mintIndex, "EYES", eyes)], 
-			fur[_generateRandomAttribute(mintIndex, "FUR", fur)],
-			horns[_generateRandomAttribute(mintIndex, "HORNS", horns)], 
-			mouth[_generateRandomAttribute(mintIndex, "MOUTH", mouth)], 
-			skin[_generateRandomAttribute(mintIndex, "SKIN", skin)]
+			_background[_generateRandomAttribute(mintIndex, "BACKGROUND", _background)],
+			_accessories[_generateRandomAttribute(mintIndex, "ACCESSORIES", _accessories)],
+			_eyes[_generateRandomAttribute(mintIndex, "EYES", _eyes)], 
+			_fur[_generateRandomAttribute(mintIndex, "FUR", _fur)],
+			_horns[_generateRandomAttribute(mintIndex, "HORNS", _horns)], 
+			_mouth[_generateRandomAttribute(mintIndex, "MOUTH", _mouth)], 
+			_skin[_generateRandomAttribute(mintIndex, "SKIN", _skin)]
 			));
 
 		_safeMint(msg.sender, mintIndex);
-
-
 	}
 
 
@@ -134,12 +139,14 @@ contract YetiMinter is ERC721Enumerable, Ownable{
 		string memory str = string(abi.encodePacked(toString(_yetiId), _attribute));
 		uint256 rand = uint256(keccak256(abi.encodePacked(str)));
 
-		// if(abi.encodePacked(skin[rand]) == )
-
 		return rand % _attributeList.length;
 	}
 
 	// Implement tokenURI
+
+	function getBackground(uint256 _tokenId) public view returns(string memory){
+		return yetis[_tokenId].background;
+	}
 
 	function getAccessory(uint256 _tokenId) public view returns(string memory){
 		return(yetis[_tokenId].accessory);
