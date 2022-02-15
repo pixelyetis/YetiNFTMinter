@@ -47,7 +47,7 @@ contract('YetiMinter', (accounts) =>{
 
 	it('Should fail to mint more NFTs than maximum supply', async()=>{
 		const amount = '0x2B5E3AF16B1880000'; // 100 ether units in hex
-		await yeti.setMaxSuply(10)
+		await yeti.setMaxSuply(4)
 
 		// Mint till supply cap
 		for(let i = await yeti.totalSupply(); i < await yeti.getMaxSupply(); i++){
@@ -82,8 +82,10 @@ contract('YetiMinter', (accounts) =>{
 	it('Should withdraw balance of contract to owner', async()=>{
 		const contractBefore = await blizz.balanceOf(await yeti.getAddr())
 		const ownerBefore = await blizz.balanceOf(sender)
+		
 		// console.log('Balance of contract before withdraw: ' + await blizz.balanceOf(await yeti.getAddr()))
 		// console.log('Balance of owner before withdraw: ' + await blizz.balanceOf(sender))
+		
 		await yeti.withdraw()
 
 		const contractAfter = await blizz.balanceOf(await yeti.getAddr())
@@ -91,7 +93,8 @@ contract('YetiMinter', (accounts) =>{
 
 		assert(ownerAfter - ownerBefore > 0)
 		assert(contractBefore - contractAfter > 0)
-
+		assert(contractAfter == 0)
+		
 		// console.log('Balance of contract after withdraw: ' + await blizz.balanceOf(await yeti.getAddr()))
 		// console.log('Balance of owner after withdraw: ' + await blizz.balanceOf(sender))
 	})
