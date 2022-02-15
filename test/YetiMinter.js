@@ -15,7 +15,7 @@ contract('YetiMinter', (accounts) =>{
 	let yeti = YetiMinter.new();
 	let blizz = Blizz.new('Blizz', 'blz');
 	let blzAddr = '0x8c7a60ac2B87CDFfD7b3d9d5e3F8f814d4D596a2';
-	const sender = '0x54f48e7daafAdA259033a05fa0AaEd3b99ae72f3';
+	const sender = accounts[0]
 
 	it('Should deploy ERC20 token and mint 100k to deployer', async() =>{
 		blizz = await Blizz.new('Blizz', 'blz');
@@ -89,7 +89,7 @@ contract('YetiMinter', (accounts) =>{
 		await yeti.withdraw()
 
 		const contractAfter = await blizz.balanceOf(await yeti.getAddr())
-		const ownerAfter = await blizz.balanceOf(sender)
+		const ownerAfter = await 	blizz.balanceOf(sender)
 
 		assert(ownerAfter - ownerBefore > 0)
 		assert(contractBefore - contractAfter > 0)
