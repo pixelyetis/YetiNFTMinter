@@ -44,7 +44,7 @@ contract('YetiMinter', (accounts) =>{
 
 	it('Should fail to mint more NFTs than maximum supply', async()=>{
 		const amount = '0x2B5E3AF16B1880000';
-
+		await yeti.setMaxSuply(10)
 		// Mint till supply cap
 		for(let i = await yeti.totalSupply(); i < await yeti.getMaxSupply(); i++){
 			await yeti.mintYeti(amount);
@@ -71,8 +71,15 @@ contract('YetiMinter', (accounts) =>{
 			await yeti.setMintingPrice(1, {from: accounts[1]})
 			await yeti.setMintTokenAddress(blzAddr, {from: accounts[1]})
 			await yeti.withdraw({from: accounts[1]})
+			await yeti.setMaxSuply(10000, {from: accounts[1]})
 		}catch(err){
 			assert(err.message.search('Ownable: caller is not the owner') > 0)
 		}
+	})
+
+	it('Should get contract ABIs', async()=> {			
+		const fs = require('fs');
+		const contract = JSON.parse(fs.readFileSync('./build/contracts/YetiMinter.json', 'utf8'));
+		// console.log(JSON.stringify(contract.abi));
 	})
 })
