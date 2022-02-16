@@ -61,19 +61,6 @@ contract('YetiMinter', (accounts) =>{
 		// console.log('Current supply: ' + await yeti.totalSupply())
 	})
 
-	// Test only owner can make crucial changes.
-	it('Should ensure only owner can make changes to contract', async()=>{
-		// From deployer
-		await yeti.setMintTokenAddress(blzAddr, {from: accounts[0]})
-
-		await truffleAssert.reverts(yeti.setMintingPrice(1, {from: accounts[1]}), 'Ownable: caller is not the owner')
-		await truffleAssert.reverts(yeti.setMintingPrice(1, {from: accounts[1]}), 'Ownable: caller is not the owner')
-		await truffleAssert.reverts(yeti.setMintTokenAddress(blzAddr, {from: accounts[1]}), 'Ownable: caller is not the owner')
-		await truffleAssert.reverts(yeti.withdraw({from: accounts[1]}), 'Ownable: caller is not the owner')
-		await truffleAssert.reverts(yeti.setMaxSuply(10000, {from: accounts[1]}), 'Ownable: caller is not the owner')
-		await truffleAssert.reverts(yeti.setBaseURI('Attack!!', {from: accounts[1]}), 'Ownable: caller is not the owner')
-	})
-
 	it('Should withdraw balance of contract to owner', async()=>{
 		const contractBefore = await blizz.balanceOf(await yeti.getAddr())
 		const ownerBefore = await blizz.balanceOf(sender)
@@ -94,9 +81,25 @@ contract('YetiMinter', (accounts) =>{
 		// console.log('Balance of owner after withdraw: ' + await blizz.balanceOf(sender))
 	})
 
-	it('Should get contract ABIs', async()=> {			
-		const fs = require('fs');
-		const contract = JSON.parse(fs.readFileSync('./build/contracts/YetiMinter.json', 'utf8'));
-		// console.log(JSON.stringify(contract.abi));
+	
+	// Test only owner can make crucial changes.
+	it('Should ensure only owner can make changes to contract', async()=>{
+		const ownErrMsg = 'Ownable: caller is not the owner'
+		
+		// onlyOwner Setters
+		await truffleAssert.reverts(yeti.setMintingPrice(1, {from: accounts[1]}), ownErrMsg)
+		await truffleAssert.reverts(yeti.setMintTokenAddress(blzAddr, {from: accounts[1]}), ownErrMsg)
+		await truffleAssert.reverts(yeti.setMaxSuply(10000, {from: accounts[1]}), ownErrMsg)
+		await truffleAssert.reverts(yeti.setBaseURI('Attack!!', {from: accounts[1]}), ownErrMsg)
+
+		// Withdrawal
+		await truffleAssert.reverts(yeti.withdraw({from: accounts[1]}), ownErrMsg)
 	})
+
+
+	// it('Should get contract ABIs', async()=> {			
+	// 	const fs = require('fs');
+	// 	const contract = JSON.parse(fs.readFileSync('./build/contracts/YetiMinter.json', 'utf8'));
+	// 	console.log(JSON.stringify(contract.abi));
+	// })
 })
