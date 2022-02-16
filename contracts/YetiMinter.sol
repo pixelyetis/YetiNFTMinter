@@ -24,22 +24,23 @@ contract YetiMinter is ERC721Enumerable, Ownable{
 
 	uint256 public MAX_SUPPLY = 420;
 	uint256 public mintPrice = 50 ether;
+	string private _customBaseURI;
 
 	address mintToken = 0x9a946c3Cb16c08334b69aE249690C236Ebd5583E;
 	ERC20Interface tokenInterface = ERC20Interface(mintToken);
 
 	
-	struct Yeti {
-		string background;
-		string accessory;
-		string eyes;
-		string fur;
-		string horns;
-		string mouth;
-		string skin;
-	}
+	// struct Yeti {
+	// 	string background;
+	// 	string accessory;
+	// 	string eyes;
+	// 	string fur;
+	// 	string horns;
+	// 	string mouth;
+	// 	string skin;
+	// }
 
-	Yeti[] public yetis;
+	// Yeti[] public yetis;
 
 	// String array of all available traits.
 	string[] private _background = ["Dark Green and Dark Blue", "Green and Purple", "Purple and Brown", "Purple and Dark Red", "Teal and Red"];
@@ -51,17 +52,14 @@ contract YetiMinter is ERC721Enumerable, Ownable{
 	string[] private _skin = ["Blue Skin", "Dark Blue Skin", "Green Skin",  "Orange Skin", "Pink Skin", "Purple Skin"];
 
 
-	// constructor() ERC721('TestNFT', 'TN') {
-	// }
+	constructor() ERC721('TestNFT', 'TN') {
+
+	}
 
 	/*-------------------------------------------------*/
 	// Use for testing purposes. Not needed for deployment.
 	function getAddr() external view returns(address){
 		return address(this);
-	}
-	uint256 public MAX_TEST_SUPPLY = MAX_SUPPLY;
-	constructor() ERC721('TestNFT', 'TN') {
-		MAX_SUPPLY = MAX_TEST_SUPPLY;
 	}
 
 	function getMaxSupply() external view returns(uint256){
@@ -72,15 +70,9 @@ contract YetiMinter is ERC721Enumerable, Ownable{
 		MAX_SUPPLY = _newSupply;
 	}
 
-	function getYetiTraits(uint _tokenId) external view returns(string memory){
-		return string(abi.encodePacked(yetis[_tokenId].accessory, '\n', 
-											yetis[_tokenId].eyes,  '\n', 
-											yetis[_tokenId].fur, '\n', 
-											yetis[_tokenId].horns, '\n', 
-											yetis[_tokenId].mouth, '\n', 
-											yetis[_tokenId].skin));
+	function getBaseURI() external view returns(string memory){
+		return _baseURI();
 	}
-
 	/*-------------------------------------------------*/
 
 
@@ -92,19 +84,19 @@ contract YetiMinter is ERC721Enumerable, Ownable{
 		// Transfer token from wallet to contract
 		tokenInterface.transferFrom(address(msg.sender), address(this), _amount);
 
-		uint256 mintIndex = totalSupply();
+		// uint256 mintIndex = totalSupply();
 
-		yetis.push(Yeti(
-			_background[_generateRandomAttribute(mintIndex, "BACKGROUND", _background)],
-			_accessories[_generateRandomAttribute(mintIndex, "ACCESSORIES", _accessories)],
-			_eyes[_generateRandomAttribute(mintIndex, "EYES", _eyes)], 
-			_fur[_generateRandomAttribute(mintIndex, "FUR", _fur)],
-			_horns[_generateRandomAttribute(mintIndex, "HORNS", _horns)], 
-			_mouth[_generateRandomAttribute(mintIndex, "MOUTH", _mouth)], 
-			_skin[_generateRandomAttribute(mintIndex, "SKIN", _skin)]
-			));
+		// yetis.push(Yeti(
+		// 	_background[_generateRandomAttribute(mintIndex, "BACKGROUND", _background)],
+		// 	_accessories[_generateRandomAttribute(mintIndex, "ACCESSORIES", _accessories)],
+		// 	_eyes[_generateRandomAttribute(mintIndex, "EYES", _eyes)], 
+		// 	_fur[_generateRandomAttribute(mintIndex, "FUR", _fur)],
+		// 	_horns[_generateRandomAttribute(mintIndex, "HORNS", _horns)], 
+		// 	_mouth[_generateRandomAttribute(mintIndex, "MOUTH", _mouth)], 
+		// 	_skin[_generateRandomAttribute(mintIndex, "SKIN", _skin)]
+		// 	));
 
-		_safeMint(msg.sender, mintIndex);
+		_safeMint(msg.sender, totalSupply());
 	}
 
 
@@ -141,33 +133,39 @@ contract YetiMinter is ERC721Enumerable, Ownable{
 	}
 
 	// Implement tokenURI
+	function _baseURI() internal view virtual override returns(string memory){
+		return _customBaseURI;
+	}
+	function setBaseURI(string memory _newURI) external onlyOwner{
+		_customBaseURI = _newURI;
+	}
 
 	function getBackground(uint256 _tokenId) public view returns(string memory){
-		return yetis[_tokenId].background;
+		return _background[_generateRandomAttribute(_tokenId, "BACKGROUND", _background)];
 	}
 
 	function getAccessory(uint256 _tokenId) public view returns(string memory){
-		return(yetis[_tokenId].accessory);
+		return _accessories[_generateRandomAttribute(_tokenId, "ACCESSORIES", _accessories)];
 	}
 
 	function getEyes(uint256 _tokenId) public view returns(string memory){
-		return(yetis[_tokenId].eyes);
+		return _eyes[_generateRandomAttribute(_tokenId, "EYES", _eyes)];
 	}
 
 	function getFur(uint256 _tokenId) public view returns(string memory){
-		return(yetis[_tokenId].fur);
+		return _fur[_generateRandomAttribute(_tokenId, "FUR", _fur)];
 	}
 
 	function getHorns(uint256 _tokenId) public view returns(string memory){
-		return(yetis[_tokenId].horns);
+		return _horns[_generateRandomAttribute(_tokenId, "HORNS", _horns)];
 	}
 
 	function getMouth(uint256 _tokenId) public view returns(string memory){
-		return(yetis[_tokenId].mouth);
+		return _mouth[_generateRandomAttribute(_tokenId, "MOUTH", _mouth)];
 	}
 
 	function getSkin(uint256 _tokenId) public view returns(string memory){
-		return(yetis[_tokenId].skin);
+		return _skin[_generateRandomAttribute(_tokenId, "SKIN", _skin)];
 	}
 
 
