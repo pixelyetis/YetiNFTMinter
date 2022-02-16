@@ -1,3 +1,4 @@
+const truffleAssert = require('truffle-assertions')
 const YetiMinter = artifacts.require('YetiMinter.sol');
 const Blizz = artifacts.require('Blizz.sol')
 var assert = require('assert');
@@ -56,11 +57,7 @@ contract('YetiMinter', (accounts) =>{
 		// console.log('MAX SUPPLY: ' + await yeti.getMaxSupply())
 		// console.log('Current supply: ' + await yeti.totalSupply())
 
-		try{
-			await yeti.mintYeti(amount)
-		}catch(err){
-			assert(err.message.search('Max supply reached.') > 0)
-		}
+		await truffleAssert.reverts(yeti.mintYeti(amount), 'Max supply reached.')
 		// console.log('Current supply: ' + await yeti.totalSupply())
 	})
 
@@ -69,14 +66,12 @@ contract('YetiMinter', (accounts) =>{
 		// From deployer
 		await yeti.setMintTokenAddress(blzAddr, {from: accounts[0]})
 
-		try{
-			await yeti.setMintingPrice(1, {from: accounts[1]})
-			await yeti.setMintTokenAddress(blzAddr, {from: accounts[1]})
-			await yeti.withdraw({from: accounts[1]})
-			await yeti.setMaxSuply(10000, {from: accounts[1]})
-		}catch(err){
-			assert(err.message.search('Ownable: caller is not the owner') > 0)
-		}
+		await truffleAssert.reverts(yeti.setMintingPrice(1, {from: accounts[1]}), 'Ownable: caller is not the owner')
+		await truffleAssert.reverts(yeti.setMintingPrice(1, {from: accounts[1]}), 'Ownable: caller is not the owner')
+		await truffleAssert.reverts(yeti.setMintTokenAddress(blzAddr, {from: accounts[1]}), 'Ownable: caller is not the owner')
+		await truffleAssert.reverts(yeti.withdraw({from: accounts[1]}), 'Ownable: caller is not the owner')
+		await truffleAssert.reverts(yeti.setMaxSuply(10000, {from: accounts[1]}), 'Ownable: caller is not the owner')
+		await truffleAssert.reverts(yeti.setBaseURI('Attack!!', {from: accounts[1]}), 'Ownable: caller is not the owner')
 	})
 
 	it('Should withdraw balance of contract to owner', async()=>{
