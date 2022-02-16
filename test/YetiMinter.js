@@ -51,7 +51,7 @@ contract('YetiMinter', (accounts) =>{
 		await yeti.setMaxSuply(4)
 
 		// Mint till supply cap
-		for(let i = await yeti.totalSupply(); i < await yeti.getMaxSupply(); i++){
+		for(let i = await yeti.totalSupply(); i < await yeti.MAX_SUPPLY(); i++){
 			await yeti.mintYeti(amount);
 		}
 		// console.log('MAX SUPPLY: ' + await yeti.getMaxSupply())
