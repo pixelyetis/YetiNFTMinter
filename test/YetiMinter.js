@@ -46,6 +46,13 @@ contract('YetiMinter', (accounts) =>{
 		// console.log('After mint: ' + await yeti.totalSupply());
 	})
 
+	it('Should not give any traits of unminted yetis', async()=>{
+		await yeti.getBackground(await yeti.totalSupply())
+		await yeti.getFur(await yeti.totalSupply())
+		await truffleAssert.reverts(yeti.getBackground(await yeti.totalSupply()+1), "Yeti not minted yet!")
+		await truffleAssert.reverts(yeti.getFur(await yeti.totalSupply()+1), "Yeti not minted yet!")
+	})
+
 	it('Should fail to mint more NFTs than maximum supply', async()=>{
 		const amount = '0x2B5E3AF16B1880000'; // 100 ether units in hex
 		await yeti.setMaxSuply(4)
@@ -81,7 +88,6 @@ contract('YetiMinter', (accounts) =>{
 		// console.log('Balance of owner after withdraw: ' + await blizz.balanceOf(sender))
 	})
 
-
 	it('Should change base URI', async()=>{
 		let testURI = 'ipfs://test-base/'
 		await yeti.setBaseURI(testURI)
@@ -89,6 +95,8 @@ contract('YetiMinter', (accounts) =>{
 		assert.equal(await yeti.tokenURI(0), 'ipfs://test-base/0')
 	})
 	
+
+
 	// Test only owner can make crucial changes.
 	it('Should ensure only owner can make changes to contract', async()=>{
 		const ownErrMsg = 'Ownable: caller is not the owner'

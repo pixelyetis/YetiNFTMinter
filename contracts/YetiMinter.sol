@@ -51,9 +51,6 @@ contract YetiMinter is ERC721Enumerable, Ownable{
 		return address(this);
 	}
 
-	function setMaxSuply(uint256 _newSupply) external onlyOwner{
-		MAX_SUPPLY = _newSupply;
-	}
 
 	/*-------------------------------------------------*/
 
@@ -70,6 +67,10 @@ contract YetiMinter is ERC721Enumerable, Ownable{
 	}
 
 
+
+	function setMaxSuply(uint256 _newSupply) external onlyOwner{
+		MAX_SUPPLY = _newSupply;
+	}
 
 	function getMintingPrice() external view returns(uint256){
 		return mintPrice;
@@ -92,7 +93,8 @@ contract YetiMinter is ERC721Enumerable, Ownable{
         tokenInterface.transfer(address(msg.sender),tokenInterface.balanceOf(address(this)));
 	}
 
-	function _generateRandomAttribute(uint256 _yetiId, string memory _attribute, string[] memory _attributeList) private pure returns(uint256) {
+	function _generateRandomAttribute(uint256 _yetiId, string memory _attribute, string[] memory _attributeList) private view returns(uint256) {
+		require(_yetiId <= totalSupply(), "Yeti not minted yet!");
 		// Use attribute name and NFT number to generate randomness.
 		string memory str = string(abi.encodePacked(toString(_yetiId), _attribute));
 		uint256 rand = uint256(keccak256(abi.encodePacked(str)));
@@ -100,7 +102,8 @@ contract YetiMinter is ERC721Enumerable, Ownable{
 		return rand % _attributeList.length;
 	}
 
-	function generateRandomWeightedAttribute(uint256 _yetiId, string memory _attribute, uint256[] memory _weights) public view returns(uint256) {
+	function _generateRandomWeightedAttribute(uint256 _yetiId, string memory _attribute, uint256[] memory _weights) private view returns(uint256) {
+		require(_yetiId <= totalSupply(), "Yeti not minted yet!");
 		// Use attribute name and NFT number to generate randomness.
 		string memory str = string(abi.encodePacked(toString(_yetiId), _attribute));
 		uint256 rand = uint256(keccak256(abi.encodePacked(str)));
@@ -110,15 +113,18 @@ contract YetiMinter is ERC721Enumerable, Ownable{
 		for(uint i = 0; i < _weights.length; i++){
 			weightSum += _weights[i];
 		}
-		uint256 randMod = rand % weightSum;
+		rand = rand % weightSum;
+		
 		uint256 sumTrait = 0;
 
 		for(uint256 i = 0; i < _weights.length; i++){
 			sumTrait += _weights[i];
-			if(randMod <= sumTrait){
+			if(rand <= sumTrait){
 				return i;
 			}
 		}
+
+		return 0;
 	}
 
 	// Implement tokenURI
@@ -138,7 +144,7 @@ contract YetiMinter is ERC721Enumerable, Ownable{
 	}
 
 	function getFur(uint256 _tokenId) public view returns(string memory){
-		return _fur[generateRandomWeightedAttribute(_tokenId, "FUR", _weightsFur)];
+		return _fur[_generateRandomWeightedAttribute(_tokenId, "FUR", _weightsFur)];
 	}
 
 	function getHorns(uint256 _tokenId) public view returns(string memory){
@@ -146,7 +152,7 @@ contract YetiMinter is ERC721Enumerable, Ownable{
 	}
 
 	function getMouth(uint256 _tokenId) public view returns(string memory){
-		return _mouth[generateRandomWeightedAttribute(_tokenId, "MOUTH", _weightsMouth)];
+		return _mouth[_generateRandomWeightedAttribute(_tokenId, "MOUTH", _weightsMouth)];
 	}
 
 	function getSkin(uint256 _tokenId) public view returns(string memory){
