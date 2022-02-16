@@ -29,19 +29,6 @@ contract YetiMinter is ERC721Enumerable, Ownable{
 	address mintToken = 0x9a946c3Cb16c08334b69aE249690C236Ebd5583E;
 	ERC20Interface tokenInterface = ERC20Interface(mintToken);
 
-	
-	// struct Yeti {
-	// 	string background;
-	// 	string accessory;
-	// 	string eyes;
-	// 	string fur;
-	// 	string horns;
-	// 	string mouth;
-	// 	string skin;
-	// }
-
-	// Yeti[] public yetis;
-
 	// String array of all available traits.
 	string[] private _background = ["Dark Green and Dark Blue", "Green and Purple", "Purple and Brown", "Purple and Dark Red", "Teal and Red"];
 	string[] private _accessories = ["Beanie", "Bowtie", "Cigarette", "Fast Food","Headphones", "None", "Nose Piercing"];
@@ -84,18 +71,6 @@ contract YetiMinter is ERC721Enumerable, Ownable{
 		// Transfer token from wallet to contract
 		tokenInterface.transferFrom(address(msg.sender), address(this), _amount);
 
-		// uint256 mintIndex = totalSupply();
-
-		// yetis.push(Yeti(
-		// 	_background[_generateRandomAttribute(mintIndex, "BACKGROUND", _background)],
-		// 	_accessories[_generateRandomAttribute(mintIndex, "ACCESSORIES", _accessories)],
-		// 	_eyes[_generateRandomAttribute(mintIndex, "EYES", _eyes)], 
-		// 	_fur[_generateRandomAttribute(mintIndex, "FUR", _fur)],
-		// 	_horns[_generateRandomAttribute(mintIndex, "HORNS", _horns)], 
-		// 	_mouth[_generateRandomAttribute(mintIndex, "MOUTH", _mouth)], 
-		// 	_skin[_generateRandomAttribute(mintIndex, "SKIN", _skin)]
-		// 	));
-
 		_safeMint(msg.sender, totalSupply());
 	}
 
@@ -124,8 +99,6 @@ contract YetiMinter is ERC721Enumerable, Ownable{
 
 	function _generateRandomAttribute(uint256 _yetiId, string memory _attribute, string[] memory _attributeList) private pure returns(uint256) {
 		// Use attribute name and NFT number to generate randomness.
-		// string yetiId = toString(_yetiId);
-		// string str = string( abi.encodePacked(_attribute, yetiId) );
 		string memory str = string(abi.encodePacked(toString(_yetiId), _attribute));
 		uint256 rand = uint256(keccak256(abi.encodePacked(str)));
 
@@ -168,7 +141,7 @@ contract YetiMinter is ERC721Enumerable, Ownable{
 		return _skin[_generateRandomAttribute(_tokenId, "SKIN", _skin)];
 	}
 
-
+	
 
 	// Function for converting uint256 to string
 	function toString(uint256 value) internal pure returns (string memory) {
