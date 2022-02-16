@@ -22,7 +22,7 @@ interface ERC20Interface {
 contract YetiMinter is ERC721Enumerable, Ownable{
 	using SafeMath for uint256;
 
-	uint256 public MAX_SUPPLY = 420;
+	uint256 public MAX_SUPPLY = 421;
 	uint256 public mintPrice = 50 ether;
 	string private _customBaseURI = "ipfs://";
 
@@ -31,12 +31,14 @@ contract YetiMinter is ERC721Enumerable, Ownable{
 
 	// String array of all available traits.
 	string[] private _background = ["Dark Green and Dark Blue", "Green and Purple", "Purple and Brown", "Purple and Dark Red", "Teal and Red"];
-	string[] private _accessories = ["Beanie", "Bowtie", "Cigarette", "Fast Food","Headphones", "None", "Nose Piercing"];
 	string[] private _eyes = ["Angry Eyes","Bored Eyes", "Eye Patch", "Glasses", "Happy Eyes", "Normal Eyes", "Pissed Eyes", "Shades", "Sleeping Eyes"];
 	string[] private _fur = ["Beige Fur", "Blue Fur", "Blue Fur Striped", "Gray Fur", "Gray Fur Checkered", "Gray Fur", "Pixelated Fur", "Rainbow Fur", "White Fur", "White Fur Striped"];
 	string[] private _horns = ["Black Horns", "Blue Horns", "Orange Horns", "Red Horns", "Yellow Horns"];
 	string[] private _mouth = ["Happy Mouth", "Normal Mouth", "Rainbow Mouth", "Rainbow Mouth Wave", "Sad Mouth", "Teeth"];
 	string[] private _skin = ["Blue Skin", "Dark Blue Skin", "Green Skin",  "Orange Skin", "Pink Skin", "Purple Skin"];
+
+	uint256[] private _weightsFur = [8,8,4,8,4,8,4,1,8,4];
+	uint256[] private _weightsMouth = [5,5,1,1,5,2];
 
 
 	constructor() ERC721('TestNFT', 'TN') {
@@ -98,6 +100,27 @@ contract YetiMinter is ERC721Enumerable, Ownable{
 		return rand % _attributeList.length;
 	}
 
+	function generateRandomWeightedAttribute(uint256 _yetiId, string memory _attribute, uint256[] memory _weights) public view returns(uint256) {
+		// Use attribute name and NFT number to generate randomness.
+		string memory str = string(abi.encodePacked(toString(_yetiId), _attribute));
+		uint256 rand = uint256(keccak256(abi.encodePacked(str)));
+
+		// Calculate the sum of all the weights
+		uint256 weightSum = 0;
+		for(uint i = 0; i < _weights.length; i++){
+			weightSum += _weights[i];
+		}
+		uint256 randMod = rand % weightSum;
+		uint256 sumTrait = 0;
+
+		for(uint256 i = 0; i < _weights.length; i++){
+			sumTrait += _weights[i];
+			if(randMod <= sumTrait){
+				return i;
+			}
+		}
+	}
+
 	// Implement tokenURI
 	function _baseURI() internal view virtual override returns(string memory){
 		return _customBaseURI;
@@ -110,16 +133,12 @@ contract YetiMinter is ERC721Enumerable, Ownable{
 		return _background[_generateRandomAttribute(_tokenId, "BACKGROUND", _background)];
 	}
 
-	function getAccessory(uint256 _tokenId) public view returns(string memory){
-		return _accessories[_generateRandomAttribute(_tokenId, "ACCESSORIES", _accessories)];
-	}
-
 	function getEyes(uint256 _tokenId) public view returns(string memory){
 		return _eyes[_generateRandomAttribute(_tokenId, "EYES", _eyes)];
 	}
 
 	function getFur(uint256 _tokenId) public view returns(string memory){
-		return _fur[_generateRandomAttribute(_tokenId, "FUR", _fur)];
+		return _fur[generateRandomWeightedAttribute(_tokenId, "FUR", _weightsFur)];
 	}
 
 	function getHorns(uint256 _tokenId) public view returns(string memory){
@@ -127,7 +146,7 @@ contract YetiMinter is ERC721Enumerable, Ownable{
 	}
 
 	function getMouth(uint256 _tokenId) public view returns(string memory){
-		return _mouth[_generateRandomAttribute(_tokenId, "MOUTH", _mouth)];
+		return _mouth[generateRandomWeightedAttribute(_tokenId, "MOUTH", _weightsMouth)];
 	}
 
 	function getSkin(uint256 _tokenId) public view returns(string memory){
