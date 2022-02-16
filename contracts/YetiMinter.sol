@@ -24,7 +24,7 @@ contract YetiMinter is ERC721Enumerable, Ownable{
 
 	uint256 public MAX_SUPPLY = 420;
 	uint256 public mintPrice = 50 ether;
-	string private _customBaseURI;
+	string private _customBaseURI = "ipfs://";
 
 	address mintToken = 0x9a946c3Cb16c08334b69aE249690C236Ebd5583E;
 	ERC20Interface tokenInterface = ERC20Interface(mintToken);
@@ -57,9 +57,6 @@ contract YetiMinter is ERC721Enumerable, Ownable{
 		MAX_SUPPLY = _newSupply;
 	}
 
-	function getBaseURI() external view returns(string memory){
-		return _baseURI();
-	}
 	/*-------------------------------------------------*/
 
 
@@ -141,7 +138,7 @@ contract YetiMinter is ERC721Enumerable, Ownable{
 		return _skin[_generateRandomAttribute(_tokenId, "SKIN", _skin)];
 	}
 
-	
+
 
 	// Function for converting uint256 to string
 	function toString(uint256 value) internal pure returns (string memory) {

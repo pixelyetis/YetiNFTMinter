@@ -81,11 +81,18 @@ contract('YetiMinter', (accounts) =>{
 		// console.log('Balance of owner after withdraw: ' + await blizz.balanceOf(sender))
 	})
 
+
+	it('Should change base URI', async()=>{
+		let testURI = 'ipfs://test-base/'
+		await yeti.setBaseURI(testURI)
+
+		assert.equal(await yeti.tokenURI(0), 'ipfs://test-base/0')
+	})
 	
 	// Test only owner can make crucial changes.
 	it('Should ensure only owner can make changes to contract', async()=>{
 		const ownErrMsg = 'Ownable: caller is not the owner'
-		
+
 		// onlyOwner Setters
 		await truffleAssert.reverts(yeti.setMintingPrice(1, {from: accounts[1]}), ownErrMsg)
 		await truffleAssert.reverts(yeti.setMintTokenAddress(blzAddr, {from: accounts[1]}), ownErrMsg)
