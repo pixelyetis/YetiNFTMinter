@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 
 interface ERC20Interface {
@@ -19,7 +20,7 @@ interface ERC20Interface {
 }
 
 
-contract YetiMinter is ERC721Enumerable, Ownable{
+contract YetiMinter is ERC721Enumerable, Ownable, ReentrancyGuard{
 	using SafeMath for uint256;
 
 	uint256 public MAX_SUPPLY = 421;
@@ -61,7 +62,7 @@ contract YetiMinter is ERC721Enumerable, Ownable{
 
 	// CHECK REENTRANCY
 	// Function to mint A new Yeti NFT.
-	function mintYeti(uint256 _amount, uint256 _tokenAmount) public payable{
+	function mintYeti(uint256 _amount, uint256 _tokenAmount) public payable nonReentrant{
 		require(totalSupply() < MAX_SUPPLY, "Max supply reached.");
 		require(_amount == mintPrice.mul(_tokenAmount), "Incorrect minting price given.");
 		require(totalSupply().add(_tokenAmount) <= MAX_SUPPLY, "Purchase would exceed max supply.");
