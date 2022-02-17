@@ -69,17 +69,18 @@ contract('YetiMinter', (accounts) =>{
 	})
 
 	it('Should not mint more than maximum session amount', async()=>{
-		const price1 = '0x2B5E3AF16B1880000'; // 50 ether units in hex
-		const price5 = '0xD8D726B7177A80000'; // 250 ether units
-		const price6 = '0x1043561A8829300000'; // 300 ether units
+		// const price1 = '0x2B5E3AF16B1880000'; // 50 ether units in hex
+		// const price5 = '0xD8D726B7177A80000'; // 250 ether units
+		// const price6 = '0x1043561A8829300000'; // 300 ether units
 
-		const newSupply = 4 + 5*2 - 1
+		const newSupply = 4 + 10*2 - 1
+		const price1 = 50 * 10 ** 18
 
 		await yeti.setMaxSuply(newSupply)
 
-		await truffleAssert.reverts(yeti.mintYeti(price6, 6), "Invalid amount to mint at once.")
-		await yeti.mintYeti(price5, 5)
-		await truffleAssert.reverts(yeti.mintYeti(price5, 5), "Purchase would exceed max supply.")
+		await truffleAssert.reverts(yeti.mintYeti((11*price1).toString(), 11), "Invalid amount to mint at once.")
+		await yeti.mintYeti((price1*10).toString(),10)
+		await truffleAssert.reverts(yeti.mintYeti((price1*10).toString(), 10), "Purchase would exceed max supply.")
 	})
 
 	it('Should withdraw balance of contract to owner', async()=>{

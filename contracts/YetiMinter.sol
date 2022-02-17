@@ -23,7 +23,7 @@ contract YetiMinter is ERC721Enumerable, Ownable{
 	using SafeMath for uint256;
 
 	uint256 public MAX_SUPPLY = 421;
-	uint256 public MAX_MINT = 5;
+	uint256 public MAX_MINT = 10;
 	uint256 public mintPrice = 50 ether;
 	string private _customBaseURI = "ipfs://";
 
