@@ -40,7 +40,7 @@ contract('YetiMinter', (accounts) =>{
 		// Mint
 		// console.log('Before mint: ' + await yeti.totalSupply());
 		const beforeMint = await yeti.totalSupply()
-		await yeti.mintYeti(amount);
+		await yeti.mintYeti(amount,1);
 		const afterMint = await yeti.totalSupply()
 		assert(afterMint > beforeMint)
 		// console.log('After mint: ' + await yeti.totalSupply());
@@ -54,18 +54,32 @@ contract('YetiMinter', (accounts) =>{
 	})
 
 	it('Should fail to mint more NFTs than maximum supply', async()=>{
-		const amount = '0x2B5E3AF16B1880000'; // 100 ether units in hex
+		const amount = '0x2B5E3AF16B1880000'; // 50 ether units in hex
 		await yeti.setMaxSuply(4)
 
 		// Mint till supply cap
 		for(let i = await yeti.totalSupply(); i < await yeti.MAX_SUPPLY(); i++){
-			await yeti.mintYeti(amount);
+			await yeti.mintYeti(amount,1);
 		}
 		// console.log('MAX SUPPLY: ' + await yeti.getMaxSupply())
 		// console.log('Current supply: ' + await yeti.totalSupply())
 
-		await truffleAssert.reverts(yeti.mintYeti(amount), 'Max supply reached.')
+		await truffleAssert.reverts(yeti.mintYeti(amount,1), 'Max supply reached.')
 		// console.log('Current supply: ' + await yeti.totalSupply())
+	})
+
+	it('Should not mint more than maximum session amount', async()=>{
+		const price1 = '0x2B5E3AF16B1880000'; // 50 ether units in hex
+		const price5 = '0xD8D726B7177A80000'; // 250 ether units
+		const price6 = '0x1043561A8829300000'; // 300 ether units
+
+		const newSupply = 4 + 5*2 - 1
+
+		await yeti.setMaxSuply(newSupply)
+
+		await truffleAssert.reverts(yeti.mintYeti(price6, 6), "Invalid amount to mint at once.")
+		await yeti.mintYeti(price5, 5)
+		await truffleAssert.reverts(yeti.mintYeti(price5, 5), "Purchase would exceed max supply.")
 	})
 
 	it('Should withdraw balance of contract to owner', async()=>{

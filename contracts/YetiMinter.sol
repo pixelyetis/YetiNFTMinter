@@ -23,6 +23,7 @@ contract YetiMinter is ERC721Enumerable, Ownable{
 	using SafeMath for uint256;
 
 	uint256 public MAX_SUPPLY = 421;
+	uint256 public MAX_MINT = 5;
 	uint256 public mintPrice = 50 ether;
 	string private _customBaseURI = "ipfs://";
 
@@ -58,16 +59,20 @@ contract YetiMinter is ERC721Enumerable, Ownable{
 
 	/*-------------------------------------------------*/
 
-
+	// CHECK REENTRANCY
 	// Function to mint A new Yeti NFT.
-	function mintYeti(uint256 _amount) public payable{
+	function mintYeti(uint256 _amount, uint256 _tokenAmount) public payable{
 		require(totalSupply() < MAX_SUPPLY, "Max supply reached.");
-		require(_amount == mintPrice, "Incorrect minting price given.");
+		require(_amount == mintPrice.mul(_tokenAmount), "Incorrect minting price given.");
+		require(totalSupply().add(_tokenAmount) <= MAX_SUPPLY, "Purchase would exceed max supply.");
+		require(_tokenAmount <= MAX_MINT, "Invalid amount to mint at once.");
 
 		// Transfer token from wallet to contract
 		tokenInterface.transferFrom(address(msg.sender), address(this), _amount);
 
-		_safeMint(msg.sender, totalSupply());
+		for(uint i = 0; i < _tokenAmount; i++){
+			_safeMint(msg.sender, totalSupply());
+		}
 	}
 
 
