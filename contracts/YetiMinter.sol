@@ -51,6 +51,10 @@ contract YetiMinter is ERC721Enumerable, Ownable{
 		return address(this);
 	}
 
+	function setMaxSuply(uint256 _newSupply) external onlyOwner{
+		MAX_SUPPLY = _newSupply;
+	}
+
 
 	/*-------------------------------------------------*/
 
@@ -68,9 +72,7 @@ contract YetiMinter is ERC721Enumerable, Ownable{
 
 
 
-	function setMaxSuply(uint256 _newSupply) external onlyOwner{
-		MAX_SUPPLY = _newSupply;
-	}
+	
 
 	function getMintingPrice() external view returns(uint256){
 		return mintPrice;
