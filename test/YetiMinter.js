@@ -121,12 +121,13 @@ contract('YetiMinter', (accounts) =>{
 		await truffleAssert.reverts(yeti.setMintTokenAddress(blzAddr, {from: accounts[1]}), ownErrMsg)
 		await truffleAssert.reverts(yeti.setMaxSuply(10000, {from: accounts[1]}), ownErrMsg)
 		await truffleAssert.reverts(yeti.setBaseURI('Attack!!', {from: accounts[1]}), ownErrMsg)
+		await truffleAssert.reverts(yeti.setPriceIncreaseNumber(420, {from: accounts[1]}), ownErrMsg)
 
 		// Withdrawal
 		await truffleAssert.reverts(yeti.withdraw({from: accounts[1]}), ownErrMsg)
 	})
 
-
+	
 	// it('Should get contract ABIs', async()=> {			
 	// 	const fs = require('fs');
 	// 	const contract = JSON.parse(fs.readFileSync('./build/contracts/YetiMinter.json', 'utf8'));

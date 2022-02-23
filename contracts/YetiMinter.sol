@@ -79,13 +79,15 @@ contract YetiMinter is ERC721Enumerable, Ownable, ReentrancyGuard{
 		}
 
 		if(totalSupply() > priceIncrease){
-			setMintingPrice(100 ether);
+			mintPrice = 100 ether;
 		}
 	}
 
 
 
-	
+	function setPriceIncreaseNumber(uint256 _newNumber) external onlyOwner{
+		priceIncrease = _newNumber;
+	}
 
 	function getMintingPrice() external view returns(uint256){
 		return mintPrice;
