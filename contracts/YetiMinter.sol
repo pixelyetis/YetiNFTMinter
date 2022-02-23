@@ -26,6 +26,7 @@ contract YetiMinter is ERC721Enumerable, Ownable, ReentrancyGuard{
 	uint256 public MAX_SUPPLY = 421;
 	uint256 public MAX_MINT = 10;
 	uint256 public mintPrice = 50 ether;
+	uint256 public priceIncrease = 100;
 	string private _customBaseURI = "ipfs://";
 
 	address mintToken = 0x9a946c3Cb16c08334b69aE249690C236Ebd5583E;
@@ -43,9 +44,8 @@ contract YetiMinter is ERC721Enumerable, Ownable, ReentrancyGuard{
 	uint256[] private _weightsMouth = [5,5,1,1,5,2];
 
 
-	constructor() ERC721('TestNFT', 'TN') {
-
-	}
+	// constructor() ERC721('Pixel Yetis', 'PY') {
+	// }
 
 	/*-------------------------------------------------*/
 	// Use for testing purposes. Not needed for deployment.
@@ -57,6 +57,9 @@ contract YetiMinter is ERC721Enumerable, Ownable, ReentrancyGuard{
 		MAX_SUPPLY = _newSupply;
 	}
 
+	constructor() ERC721('TestNFT', 'TN') {
+		setMintTokenAddress(0x8c7a60ac2B87CDFfD7b3d9d5e3F8f814d4D596a2);
+	}
 
 	/*-------------------------------------------------*/
 
@@ -73,6 +76,10 @@ contract YetiMinter is ERC721Enumerable, Ownable, ReentrancyGuard{
 
 		for(uint i = 0; i < _tokenAmount; i++){
 			_safeMint(msg.sender, totalSupply());
+		}
+
+		if(totalSupply() > priceIncrease){
+			setMintingPrice(100 ether);
 		}
 	}
 
@@ -92,7 +99,7 @@ contract YetiMinter is ERC721Enumerable, Ownable, ReentrancyGuard{
 		return mintToken;
 	}
 
-	function setMintTokenAddress(address _newMintToken) external onlyOwner{
+	function setMintTokenAddress(address _newMintToken) public onlyOwner{
 		mintToken = _newMintToken;
 		tokenInterface = ERC20Interface(mintToken);
 	}
