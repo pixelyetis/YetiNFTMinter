@@ -110,7 +110,37 @@ contract('YetiMinter', (accounts) =>{
 		assert.equal(await yeti.tokenURI(0), 'ipfs://test-base/0')
 	})
 	
+	it('Should change when price increase happens', async()=>{
+		
+		let _yeti = await YetiMinter.new();
+		await _yeti.setMintTokenAddress(blzAddr);
 
+		// Approve spending amount
+		await blizz.approve(await _yeti.getAddr(), '0xffffffffffffffffffffff')
+
+		let currentNumnber = Number(await _yeti.priceIncrease())
+		let newNumber = 0
+
+		// Set new number
+		await _yeti.setPriceIncreaseNumber(newNumber)
+		
+		// Ensure priceIncreaseNumber is changed
+		assert(Number(await _yeti.priceIncrease()) !== currentNumnber)
+		assert(Number(await _yeti.priceIncrease()) === newNumber)
+
+		// Ensure new price is automatically changed once priceIncreaseNumber is passed
+		let beforePrice = await _yeti.getMintingPrice()
+
+		// If this is false then next assert may get a false positive
+		assert(String(await _yeti.getMintingPrice()) === String(beforePrice)) 
+		await _yeti.mintYeti(beforePrice, 1)
+		let afterPrice = await _yeti.getMintingPrice()
+		assert(String(afterPrice) !== String(beforePrice))
+
+		await truffleAssert.reverts(_yeti.mintYeti(beforePrice, 1), "Incorrect minting price given.")
+		await _yeti.mintYeti(afterPrice, 1)
+	})
+	
 
 	// Test only owner can make crucial changes.
 	it('Should ensure only owner can make changes to contract', async()=>{
@@ -127,7 +157,7 @@ contract('YetiMinter', (accounts) =>{
 		await truffleAssert.reverts(yeti.withdraw({from: accounts[1]}), ownErrMsg)
 	})
 
-	
+
 	// it('Should get contract ABIs', async()=> {			
 	// 	const fs = require('fs');
 	// 	const contract = JSON.parse(fs.readFileSync('./build/contracts/YetiMinter.json', 'utf8'));
