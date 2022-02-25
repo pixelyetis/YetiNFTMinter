@@ -27,7 +27,7 @@ contract YetiMinter is ERC721Enumerable, Ownable, ReentrancyGuard{
 	uint256 public MAX_MINT = 10;
 	uint256 public mintPrice = 50 ether;
 	uint256 public priceIncrease = 100;
-	string private _customBaseURI = "ipfs://";
+	string private _customBaseURI = "https://pixelyetis.fra1.digitaloceanspaces.com/metadata/";
 
 	address mintToken = 0x9a946c3Cb16c08334b69aE249690C236Ebd5583E;
 	ERC20Interface tokenInterface = ERC20Interface(mintToken);
