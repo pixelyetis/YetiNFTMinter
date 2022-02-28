@@ -93,7 +93,7 @@ contract('YetiMinter', (accounts) =>{
 		let testURI = 'ipfs://test-base/'
 		await yeti.setBaseURI(testURI)
 
-		assert.equal(await yeti.tokenURI(0), 'ipfs://test-base/0')
+		assert.equal(await yeti.tokenURI(1), 'ipfs://test-base/1')
 	})
 	
 	it('Should change when price increase happens', async()=>{
