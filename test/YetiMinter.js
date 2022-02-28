@@ -5,13 +5,6 @@ var assert = require('assert');
 
 
 contract('YetiMinter', (accounts) =>{
-	// it('Should mint new NFT', async() =>{
-	// 	const yeti = await YetiMinter.new();
-	// 	console.log('Before mint: ' + await yeti.totalSupply());
-	// 	await yeti.mintYeti('0x2B5E3AF16B1880000');
-	// 	console.log('After mint: ' + await yeti.totalSupply());
-
-	// })
 
 	let yeti = YetiMinter.new();
 	let blizz = Blizz.new('Blizz', 'blz');
@@ -32,18 +25,15 @@ contract('YetiMinter', (accounts) =>{
 	})
 
 	it('Should approve and pay to successfully mint a new NFT', async()=>{
-		const amount = '0x2B5E3AF16B1880000';
 		
 		// Approve spending amount
 		await blizz.approve(await yeti.getAddr(), '0xffffffffffffffffffffff')
 
 		// Mint
-		// console.log('Before mint: ' + await yeti.totalSupply());
 		const beforeMint = await yeti.totalSupply()
-		await yeti.mintYeti(amount,1);
+		await yeti.mintYeti(1);
 		const afterMint = await yeti.totalSupply()
 		assert(afterMint > beforeMint)
-		// console.log('After mint: ' + await yeti.totalSupply());
 	})
 
 	it('Should not give any traits of unminted yetis', async()=>{
@@ -54,18 +44,14 @@ contract('YetiMinter', (accounts) =>{
 	})
 
 	it('Should fail to mint more NFTs than maximum supply', async()=>{
-		const amount = '0x2B5E3AF16B1880000'; // 50 ether units in hex
 		await yeti.setMaxSuply(4)
 
 		// Mint till supply cap
 		for(let i = await yeti.totalSupply(); i < await yeti.MAX_SUPPLY(); i++){
-			await yeti.mintYeti(amount,1);
+			await yeti.mintYeti(1);
 		}
-		// console.log('MAX SUPPLY: ' + await yeti.getMaxSupply())
-		// console.log('Current supply: ' + await yeti.totalSupply())
 
-		await truffleAssert.reverts(yeti.mintYeti(amount,1), 'Max supply reached.')
-		// console.log('Current supply: ' + await yeti.totalSupply())
+		await truffleAssert.reverts(yeti.mintYeti(1), 'Max supply reached.')
 	})
 
 	it('Should not mint more than maximum session amount', async()=>{
@@ -78,9 +64,9 @@ contract('YetiMinter', (accounts) =>{
 
 		await yeti.setMaxSuply(newSupply)
 
-		await truffleAssert.reverts(yeti.mintYeti((11*price1).toString(), 11), "Invalid amount to mint at once.")
-		await yeti.mintYeti((price1*10).toString(),10)
-		await truffleAssert.reverts(yeti.mintYeti((price1*10).toString(), 10), "Purchase would exceed max supply.")
+		await truffleAssert.reverts(yeti.mintYeti(11), "Invalid amount to mint at once.")
+		await yeti.mintYeti(10)
+		await truffleAssert.reverts(yeti.mintYeti(10), "Purchase would exceed max supply.")
 	})
 
 	it('Should withdraw balance of contract to owner', async()=>{
@@ -133,12 +119,9 @@ contract('YetiMinter', (accounts) =>{
 
 		// If this is false then next assert may get a false positive
 		assert(String(await _yeti.getMintingPrice()) === String(beforePrice)) 
-		await _yeti.mintYeti(beforePrice, 1)
+		await _yeti.mintYeti(1)
 		let afterPrice = await _yeti.getMintingPrice()
 		assert(String(afterPrice) !== String(beforePrice))
-
-		await truffleAssert.reverts(_yeti.mintYeti(beforePrice, 1), "Incorrect minting price given.")
-		await _yeti.mintYeti(afterPrice, 1)
 	})
 	
 

@@ -63,16 +63,15 @@ contract YetiMinter is ERC721Enumerable, Ownable, ReentrancyGuard{
 
 	/*-------------------------------------------------*/
 
-	// CHECK REENTRANCY
 	// Function to mint A new Yeti NFT.
-	function mintYeti(uint256 _amount, uint256 _tokenAmount) public payable nonReentrant{
+	function mintYeti(uint256 _tokenAmount) public payable nonReentrant{
 		require(totalSupply() < MAX_SUPPLY, "Max supply reached.");
-		require(_amount == mintPrice.mul(_tokenAmount), "Incorrect minting price given.");
 		require(totalSupply().add(_tokenAmount) <= MAX_SUPPLY, "Purchase would exceed max supply.");
 		require(_tokenAmount <= MAX_MINT, "Invalid amount to mint at once.");
-
+		require(tokenInterface.balanceOf(address(msg.sender))>= mintPrice.mul(_tokenAmount), "Insufficient funds.");
+		
 		// Transfer token from wallet to contract
-		tokenInterface.transferFrom(address(msg.sender), address(this), _amount);
+		tokenInterface.transferFrom(address(msg.sender), address(this), mintPrice.mul(_tokenAmount));
 
 		for(uint i = 0; i < _tokenAmount; i++){
 			_safeMint(msg.sender, totalSupply()+1);
