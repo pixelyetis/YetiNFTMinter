@@ -55,9 +55,6 @@ contract('YetiMinter', (accounts) =>{
 	})
 
 	it('Should not mint more than maximum session amount', async()=>{
-		// const price1 = '0x2B5E3AF16B1880000'; // 50 ether units in hex
-		// const price5 = '0xD8D726B7177A80000'; // 250 ether units
-		// const price6 = '0x1043561A8829300000'; // 300 ether units
 
 		const newSupply = 4 + 10*2 - 1
 		const price1 = 50 * 10 ** 18
@@ -124,6 +121,20 @@ contract('YetiMinter', (accounts) =>{
 		assert(String(afterPrice) !== String(beforePrice))
 	})
 	
+	it('Should not mint a new Yeti unless there are enough funds', async()=>{
+		await blizz.approve(await yeti.getAddr(), '0xffffffffffffffffffffff', {from: accounts[1]})
+
+		// 0 balance, should fail
+		await truffleAssert.reverts(yeti.mintYeti(1, {from: accounts[1]}), "Insufficient funds.")
+
+		// Balance too low, should fail
+		await blizz.gimmieSome(40, {from: accounts[1]})
+		await truffleAssert.reverts(yeti.mintYeti(1, {from: accounts[1]}), "Insufficient funds.")
+
+		// Balance is 60, should succeed
+		await blizz.gimmieSome(20, {from: accounts[1]})		
+		await yeti.mintYeti(1, {from: accounts[1]})
+	})
 
 	// Test only owner can make crucial changes.
 	it('Should ensure only owner can make changes to contract', async()=>{
