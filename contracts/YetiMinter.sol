@@ -23,7 +23,7 @@ interface ERC20Interface {
 contract YetiMinter is ERC721Enumerable, Ownable, ReentrancyGuard{
 	using SafeMath for uint256;
 
-	uint256 public MAX_SUPPLY = 421;
+	uint256 public MAX_SUPPLY = 420;
 	uint256 public MAX_MINT = 10;
 	uint256 public mintPrice = 50 ether;
 	uint256 public priceIncrease = 100;
@@ -48,7 +48,7 @@ contract YetiMinter is ERC721Enumerable, Ownable, ReentrancyGuard{
 	// }
 
 	/*-------------------------------------------------*/
-	// Use for testing purposes. Not needed for deployment.
+	// // Use for testing purposes. Not needed for deployment.
 	function getAddr() external view returns(address){
 		return address(this);
 	}
@@ -75,7 +75,7 @@ contract YetiMinter is ERC721Enumerable, Ownable, ReentrancyGuard{
 		tokenInterface.transferFrom(address(msg.sender), address(this), _amount);
 
 		for(uint i = 0; i < _tokenAmount; i++){
-			_safeMint(msg.sender, totalSupply());
+			_safeMint(msg.sender, totalSupply()+1);
 		}
 
 		if(totalSupply() > priceIncrease){
